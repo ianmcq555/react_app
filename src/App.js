@@ -1,14 +1,19 @@
 import React, { Component } from 'react'
-import Nav from './Nav';
+import Nav from './components/Nav';
+import { Routes, Route, BrowserRouter as Router } from 'react-router-dom';
+import Home from './views/Home';
+import Login from './views/Login';
+import Signup from './views/Signup';
 
 export default class App extends Component {
   constructor(){
     super();
     this.state = {
-      user: null,
+      user: {},
       post: [],
       name: 'Ian',
-      age: 25
+      age: 25,
+      message: {}
     }
     console.log('Construction complete...')
   }
@@ -22,16 +27,36 @@ export default class App extends Component {
     this.setState({age: this.state.age + 1})
   }
 
+  logMeIn = (user) => {
+    this.setState({
+      user: user
+    })
+  }
+
+  logMeOut = () => {
+    this.setState({
+      user: {}
+    })
+  }
+
+  addMessage = (msg, category) => {
+    this.setState({message: {message: msg, category: category}})
+  }
+
   render() {
     console.log('Rendering...')
     return (
+      <Router>
       <div>
-        <Nav/>
-        <h1>Hello</h1>
-        <h3>The name is {this.state.name}</h3>
-        <button onClick={this.happyBirthday} >Add to age +</button>
-        <h3>Age: {this.state.age}</h3>
+        <Nav user={this.state.user} logMeOut={this.logMeOut} cart ={this.state.cart}/>
+        <p className={`bg-${this.state.message.category}`}>{this.state.message.message}</p>
+        <Routes>
+          <Route path='/' element={<Home age={this.state.age} x={this.happyBirthday}/>}/>
+          <Route path='/login' element={<Login logMeIn={this.logMeIn} addMessage={this.addMessage}/>}/>
+          <Route path='/signup' element={<Signup addMessage={this.addMessage}/>}/>
+        </Routes>
       </div>
+      </Router>
     )
   }
 }
